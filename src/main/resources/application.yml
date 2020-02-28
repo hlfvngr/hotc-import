@@ -1,0 +1,56 @@
+server:
+  port: 8085
+
+spring:
+  # 环境 dev|test|prod
+  profiles:
+    active: dev
+  datasource:
+      url: jdbc:sqlserver://10.173.211.92:1433;databaseName=DAO_Test
+      username: sa
+      password: hgrica1@
+      driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+      thymeleaf:
+        prefix: classpath:/templates/**
+        enabled: true
+        cache: false
+        mode: HTML
+        suffix: .html
+      hikari:
+        minimum-idle: 5
+        maximum-pool-size: 15
+        connection-test-query: select 1
+        max-lifetime: 1800000
+        connection-timeout: 30000
+        pool-name: hgitsHikariCP
+  resources:
+    static-locations: ["/templates/","/static/"]
+
+
+  aop:
+      proxy-target-class: true
+
+  messages:
+    encoding: utf-8
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+mybatis:
+  type-aliases-package: com.hgits.hotc.model
+  mapper-locations: classpath:mapper/*/*.xml
+  configuration:
+    jdbc-type-for-null: null
+
+mapper:
+  mappers: com.hgits.hotc.common.config.MyMapper
+  not-empty: false
+  identity: SQLSERVER
+
+pagehelper:
+  helperDialect: sqlserver
+  reasonable: true
+  supportMethodsArguments: true
+  params: count=countSql
+

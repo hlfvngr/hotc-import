@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hgits.hotc.dao.GantryMapper">
+    <resultMap id="gantry" type="com.hgits.hotc.model.Gantry">
+        <id column="GantryId" jdbcType="DECIMAL" property="gantryId"/>
+        <result column="GantryHex" jdbcType="DECIMAL" property="gantryHex"/>
+        <result column="ChargeUnit" jdbcType="VARCHAR" property="chargeUnit"/>
+    </resultMap>
+</mapper>

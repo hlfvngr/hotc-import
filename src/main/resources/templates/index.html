@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<script type="text/javascript" th:src="@{~/js/import.js}"></script>
+<head>
+    <meta charset="UTF-8">
+    <title>导入页面</title>
+</head>
+<body>
+
+<!--<form action="/export" method="POST" enctype="multipart/form-data">
+    <input type="file" name="file" ><br>
+    <input type="submit" value="导入">
+</form>-->
+
+
+<!--参数导入 文件选择-->
+<div id="paramImp" style="margin-left: 13px">
+    <button style="cursor:pointer;" id="fileSelect" οnclick="fileSelect()">
+        <span class="glyphicon glyphicon-plus glyphicon-active"></span>选择文件
+    </button>
+    <span id="selectFileName" style="width: 200px;margin-left: 12px; margin-right: 20px"></span>
+
+    <form id="uploadForm" method="POST" enctype="multipart/form-data" style="display: inline">
+        <input type="file" name="file" id="file" style="display:none" change="updateFileName(this)"/>
+        <button οnclick="importParam()"  id="upload" type="upload" class="btn btn-primary">导入</button>
+    </form>
+</div>
+
+
+</body>
+</html>
