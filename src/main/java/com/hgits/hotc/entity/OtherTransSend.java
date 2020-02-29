@@ -1,6 +1,7 @@
 package com.hgits.hotc.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -8,6 +9,7 @@ import java.util.Date;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class OtherTransSend implements Serializable {
 
     private static final long serialVersionUID = -8724960084267915275L;

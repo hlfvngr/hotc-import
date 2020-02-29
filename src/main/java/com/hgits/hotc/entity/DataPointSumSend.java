@@ -1,12 +1,14 @@
 package com.hgits.hotc.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class DataPointSumSend implements Serializable {
 
     private static final long serialVersionUID = -2680207796889109948L;

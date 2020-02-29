@@ -10,7 +10,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
-import java.util.Enumeration;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -19,9 +19,9 @@ import java.util.zip.ZipFile;
  * @author  huanghaifeng
  * @Dateate 2018-11-27
  */
-public class FileUtil {
+public class FileUtils {
 
-    private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
+    private static Logger logger = LoggerFactory.getLogger(FileUtils.class);
 
     /**
      * 获取文件md5码
@@ -327,6 +327,22 @@ public class FileUtil {
         }
         return flag;
     }
+
+    public static List<File> getFilesFrom(String parent) {
+        if(StringUtils.isEmpty(parent))
+            return null;
+
+        File parentDir = new File(parent);
+        if (!parentDir.exists())
+            return null;
+
+        File[] files = parentDir.listFiles();
+
+        return new ArrayList<>(Arrays.asList(files));
+    }
+
+
+
 
 /*    public static void main(String[] args) {
         FileUtil fileUtil = new FileUtil();

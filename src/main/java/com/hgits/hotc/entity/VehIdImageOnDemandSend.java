@@ -1,12 +1,14 @@
 package com.hgits.hotc.entity;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class VehIdImageOnDemandSend implements Serializable {
 
     private static final long serialVersionUID = -6980631716063500885L;

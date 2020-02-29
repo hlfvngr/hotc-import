@@ -54,3 +54,7 @@ pagehelper:
   supportMethodsArguments: true
   params: count=countSql
 
+#系统变量
+hotc:
+  tmpDir: E:/fotc/tmpDir/
+
