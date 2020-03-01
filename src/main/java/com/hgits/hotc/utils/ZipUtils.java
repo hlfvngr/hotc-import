@@ -13,6 +13,10 @@ public class ZipUtils {
         while (null != (nextEntry = zis.getNextEntry())){
             if(!nextEntry.isDirectory()){
                 File f = new File(parent, nextEntry.getName());
+                File parentFile = f.getParentFile();
+                if (!parentFile.exists()) {
+                    parentFile.mkdirs();
+                }
 
                 FileOutputStream fos = new FileOutputStream(f);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);

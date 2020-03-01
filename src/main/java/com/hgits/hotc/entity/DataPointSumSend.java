@@ -4,11 +4,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "tb_DataPointSum_Recv")
 public class DataPointSumSend implements Serializable {
 
     private static final long serialVersionUID = -2680207796889109948L;

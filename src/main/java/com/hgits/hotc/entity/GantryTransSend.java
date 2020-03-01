@@ -4,11 +4,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Table;
 import java.io.Serializable;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "tb_GantryTrans_Recv")
 public class GantryTransSend implements Serializable {
 
     private static final long serialVersionUID = 4220589053396152568L;

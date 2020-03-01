@@ -5,6 +5,6 @@ import java.util.Map;
 
 public interface ImportService {
 
-    void insertData(Map<Class<?>, List> files);
+    void insertData(Map<Class<?>, List<?>> entityListMap);
 
 }

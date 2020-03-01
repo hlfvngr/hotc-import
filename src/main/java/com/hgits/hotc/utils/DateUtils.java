@@ -7,13 +7,14 @@ import java.util.Date;
 
 public class DateUtils {
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss");
-    private static final DateTimeFormatter FORMATTER1 = DateTimeFormatter.ofPattern("yyyy/MM/dd hh:mm:ss");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    private static final DateTimeFormatter FORMATTER1 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
     private static final DateTimeFormatter FORMATTER2 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private static final DateTimeFormatter FORMATTER3 = DateTimeFormatter.ofPattern("yyyy/MM/dd");
 
 
     public static Date parse(String dateStr){
+        if(dateStr == null || dateStr.length() == 0) return null;
+
         LocalDateTime localDateTime = null;
         try {
             localDateTime = LocalDateTime.parse(dateStr, FORMATTER);
@@ -24,11 +25,7 @@ public class DateUtils {
                 try {
                     localDateTime = LocalDateTime.parse(dateStr, FORMATTER2);
                 } catch (Exception e3){
-                    try {
-                        localDateTime = LocalDateTime.parse(dateStr, FORMATTER3);
-                    } catch (Exception e4) {
-                        throw new RuntimeException(e4);
-                    }
+                    throw new RuntimeException(e3);
                 }
             }
 

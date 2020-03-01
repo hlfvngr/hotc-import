@@ -6,7 +6,7 @@ spring:
   profiles:
     active: dev
   datasource:
-      url: jdbc:sqlserver://10.173.211.92:1433;databaseName=DAO_Test
+      url: jdbc:sqlserver://10.173.234.82:2708;databaseName=HOTC_IMPORT
       username: sa
       password: hgrica1@
       driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -30,6 +30,15 @@ spring:
   aop:
       proxy-target-class: true
 
+  # 配置上传文件大小
+
+  servlet:
+    multipart:
+      enabled: true
+      file-size-threshold: 0
+      max-file-size: 100MB
+      max-request-size: 100MB
+
   messages:
     encoding: utf-8
 
@@ -42,11 +51,13 @@ mybatis:
   mapper-locations: classpath:mapper/*/*.xml
   configuration:
     jdbc-type-for-null: null
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 mapper:
-  mappers: com.hgits.hotc.common.config.MyMapper
+  mappers: com.hgits.hotc.common.mapper.MyMapper
   not-empty: false
   identity: SQLSERVER
+  style: normal
 
 pagehelper:
   helperDialect: sqlserver

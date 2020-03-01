@@ -1,4 +1,4 @@
-package com.hgits.hotc.common.config;
+package com.hgits.hotc.common.mapper;
 
 import tk.mybatis.mapper.common.Mapper;
 import tk.mybatis.mapper.common.MySqlMapper;

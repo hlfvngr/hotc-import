@@ -13,6 +13,8 @@ public interface IService<T> {
 
 	int save(T entity);
 
+	void saveAll(List<T> value);
+
 	int delete(Object key);
 
 	int batchDelete(List<String> list, String property, Class<T> clazz);

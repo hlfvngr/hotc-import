@@ -61,10 +61,12 @@ public class ImportController {
         //3. 在插库操作中，保证事务性，若中间有插入失败，则回滚，返回插入失败
         //4.
         String originalFilename = file.getOriginalFilename();
+        String fileNameNoEx = FileUtils.getFileNameNoEx(originalFilename);
+
         InputStream inputStream = file.getInputStream();
 
         String tmpDir = hotcProperties.getTmpDir();
-        String parent = tmpDir + File.separator + originalFilename;
+        String parent = tmpDir + File.separator + fileNameNoEx;
 
         //1. 将压缩文件解压到指定目录
         ZipUtils.unzip(parent, inputStream);
@@ -76,7 +78,7 @@ public class ImportController {
         if(files == null)
             return ApiResult.builder().code(0).msg("插入成功").build();
 
-        Map<Class<?>, List> entityListMap = new HashMap<>();
+        Map<Class<?>, List<?>> entityListMap = new HashMap<>();
 
         for (File f : files) {
             Class<?> aClass = getClass(f);

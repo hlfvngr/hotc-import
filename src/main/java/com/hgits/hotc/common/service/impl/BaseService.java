@@ -65,4 +65,10 @@ public abstract class BaseService<T> implements IService<T> {
 	public List<T> selectByExample(Object example) {
 		return mapper.selectByExample(example);
 	}
+
+	@Transactional
+	public void saveAll(List<T> value) {
+		value.forEach(mapper::insert);
+	}
+
 }

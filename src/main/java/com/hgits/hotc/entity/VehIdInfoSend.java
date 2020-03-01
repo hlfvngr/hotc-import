@@ -4,12 +4,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Table;
 import java.io.Serializable;
 import java.util.Date;
 
 @Setter
 @Getter
 @NoArgsConstructor
+@Table(name = "tb_VehIdInfo_Recv")
 public class VehIdInfoSend implements Serializable {
 
     private static final long serialVersionUID = -42190583101148479L;

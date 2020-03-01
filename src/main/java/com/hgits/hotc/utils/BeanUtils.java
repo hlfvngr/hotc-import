@@ -7,6 +7,8 @@ import java.util.*;
 
 public class BeanUtils {
 
+    private static final String DATE_WITH_NANO_PATTERN = "\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{3}";
+
     public static <T> List<T> transferTo(File file, Class<T> clazz) throws IllegalAccessException, InstantiationException, IOException, InvocationTargetException {
         List<T> result = new ArrayList<>();
 
@@ -16,7 +18,7 @@ public class BeanUtils {
 
         String fieldListStr = reader.readLine();
 
-        if(fieldListStr == null || fieldListStr.length() == 0) {
+         if(fieldListStr == null || fieldListStr.length() == 0) {
             throw new RuntimeException("表头字段为空！");
         }
 
@@ -28,18 +30,32 @@ public class BeanUtils {
             String[] values = line.split("\t");
             T t = clazz.newInstance();
 
-            for (int i = 0; i < fields.length; i++) {
+            for (int i = 0; i < fields.length && i < values.length; i++) {
                 String field = fields[i];
-                String setMethodName = "set" + capitalCamel(field);
+                String setMethodName = "set" + field.toLowerCase();
                 if(methodMap.containsKey(setMethodName)){
                     Method method = methodMap.get(setMethodName);
                     //此处需要对参数进行处理
                     Class<?>[] parameterTypes = method.getParameterTypes();
                     Object val = null;
-                    if (parameterTypes[0].isAssignableFrom(Date.class)){
-                        val = DateUtils.parse(values[i]);
-                    } else {
-                        val = parameterTypes[0].cast(values[i]);
+                    if(parameterTypes[0].isAssignableFrom(String.class)) {
+                        if (values[i] != null && values[i].matches(DATE_WITH_NANO_PATTERN)){
+                            val = values[i].substring(0, values[i].indexOf('.'));
+                        } else {
+                            val = values[i];
+                        }
+                    } else if (values[i] != null && values[i].length() > 0) {
+                        if (parameterTypes[0].isAssignableFrom(Date.class)){
+                            val = DateUtils.parse(values[i]);
+                        } else if (parameterTypes[0].isAssignableFrom(Byte.class)){
+                            val = Byte.valueOf(values[i]);
+                        } else if (parameterTypes[0].isAssignableFrom(Short.class)){
+                            val = Short.valueOf(values[i]);
+                        } else if (parameterTypes[0].isAssignableFrom(Integer.class)){
+                            val = Integer.valueOf(values[i]);
+                        } else if (parameterTypes[0].isAssignableFrom(Long.class)){
+                            val = Long.valueOf(values[i]);
+                        }
                     }
 
                     method.invoke(t, val);
@@ -60,7 +76,7 @@ public class BeanUtils {
         Method[] methods = clazz.getMethods();
         for (int i = 0; i < methods.length; i++) {
             if(methods[i].getName().startsWith("set")) {
-                methodMap.put(methods[i].getName(), methods[i]);
+                methodMap.put(methods[i].getName().toLowerCase(), methods[i]);
             }
         }
         return methodMap;
