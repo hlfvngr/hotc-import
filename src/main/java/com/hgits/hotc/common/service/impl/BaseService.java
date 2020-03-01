@@ -1,6 +1,7 @@
 package com.hgits.hotc.common.service.impl;
 
 import com.hgits.hotc.common.service.IService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,7 +67,7 @@ public abstract class BaseService<T> implements IService<T> {
 		return mapper.selectByExample(example);
 	}
 
-	@Transactional
+	@Transactional(rollbackFor = Exception.class)
 	public void saveAll(List<T> value) {
 		value.forEach(mapper::insert);
 	}

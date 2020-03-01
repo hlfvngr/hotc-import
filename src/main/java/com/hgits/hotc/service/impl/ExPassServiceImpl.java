@@ -1,4 +1,4 @@
-package com.hgits.hotc.service.impl.impl;
+package com.hgits.hotc.service.impl;
 
 import com.hgits.hotc.common.service.impl.BaseService;
 import com.hgits.hotc.entity.ExPassSend;

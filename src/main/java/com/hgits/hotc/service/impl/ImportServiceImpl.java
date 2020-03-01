@@ -1,12 +1,13 @@
-package com.hgits.hotc.service.impl.impl;
+package com.hgits.hotc.service.impl;
 
 import com.hgits.hotc.common.service.impl.BaseService;
-import com.hgits.hotc.service.impl.ImportService;
+import com.hgits.hotc.service.ImportService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -19,11 +20,13 @@ public class ImportServiceImpl implements ImportService, ApplicationContextAware
     private ApplicationContext applicationContext;
 
     @Override
-    public void insertData(Map<Class<?>, List<?>> entityListMap) {
+    @Transactional(rollbackFor = Exception.class)
+    public void saveData(Map<Class<?>, List<?>> entityListMap) {
         for (Map.Entry<Class<?>, List<?>> pair : entityListMap.entrySet()) {
             Class<?> key = pair.getKey();
             BaseService service = (BaseService)applicationContext.getBean(getServiceName(key));
             List<?> value = pair.getValue();
+            log.info("当前插入流水类型为：{}, 数据量为：{}", key.getSimpleName(), value.size());
             service.saveAll(value);
         }
     }

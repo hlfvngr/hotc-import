@@ -1,9 +1,14 @@
 package com.hgits.hotc.web.controller;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageInfo;
 import com.hgits.hotc.common.properties.HotcProperties;
 import com.hgits.hotc.entity.*;
+import com.hgits.hotc.entity.enums.ImportResult;
+import com.hgits.hotc.entity.enums.Summation;
 import com.hgits.hotc.entity.vo.ApiResult;
-import com.hgits.hotc.service.impl.ImportService;
+import com.hgits.hotc.service.ImportService;
+import com.hgits.hotc.service.LogService;
 import com.hgits.hotc.utils.BeanUtils;
 import com.hgits.hotc.utils.FileUtils;
 import com.hgits.hotc.utils.ZipUtils;
@@ -17,9 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -47,21 +50,28 @@ public class ImportController {
     HotcProperties hotcProperties;
 
     @Resource
+    LogService logService;
+
+    @Resource
     ImportService importService;
 
     @PostMapping("/logs")
-    public ApiResult selectImportLogs( ) throws IOException {
-        return ApiResult.builder().build();
+    public ApiResult selectImportLogs(@RequestParam("pageNum") Integer pageNum,
+                                      @RequestParam("pageSize") Integer pageSize) {
+        Page<Log> page = new Page<>(pageNum, pageSize);
+        PageInfo<Log> logs = logService.listByPage(page);
+        return ApiResult.builder().code(0).data(logs).build();
     }
 
-    @PostMapping("/natural_sum")
+    @PostMapping("/persist")
     public ApiResult importFlowAboutNaturalSum(@RequestParam("file") MultipartFile file) throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
         //1. 读取文件名，然后进行文件名校验及MD5码校验
-        //2. 读取压缩包中文件的内容，将每种类型的文件进行插库
-        //3. 在插库操作中，保证事务性，若中间有插入失败，则回滚，返回插入失败
-        //4.
+        //2. 读取压缩包中文件的内容，将每种类型的文件进行插库   完成
+        //3. 在插库操作中，保证事务性，若中间有插入失败，则回滚，返回插入失败 完成
         String originalFilename = file.getOriginalFilename();
         String fileNameNoEx = FileUtils.getFileNameNoEx(originalFilename);
+
+        Log aLog = getLog(originalFilename);
 
         InputStream inputStream = file.getInputStream();
 
@@ -87,14 +97,34 @@ public class ImportController {
         }
 
         //4. 尝试将解压缩的文件进行入库
-        importService.insertData(entityListMap);
+        try {
+            importService.saveData(entityListMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("发生异常：{}", e.getMessage());
+            aLog.setResult(ImportResult.FAIL.getCode());
+            return ApiResult.builder().code(1).msg("插入失败").build();
+        } finally {
+            logService.insert(aLog);
+        }
 
-        return ApiResult.builder().build();
+        return ApiResult.builder().code(0).msg("插入成功").build();
     }
 
-    @PostMapping("/squad_sum")
-    public ApiResult importFlowAboutSquadSum(@RequestParam("file") MultipartFile file){
-        return ApiResult.builder().build();
+    private Log getLog(String originalFilename) {
+        // fotc_naturalsum_4401_2402_7_91F3FE105B41CEE5880D747C72C8BA92_20200301
+        String[] splits = originalFilename.split("_");
+        Integer sumType = Summation.SQUAD.getDesc().equals(splits[1])
+                ? Summation.SQUAD.getCode() : Summation.NATURAL.getCode();
+
+        Log log = new Log();
+
+        log.setId(UUID.randomUUID().toString().replaceAll("-",""))
+            .setFileName(originalFilename)
+            .setSumType(sumType)
+            .setImportTime(new Date())
+            .setResult(ImportResult.SUCCESS.getCode());
+        return log;
     }
 
     private Class<?> getClass(File file) {
