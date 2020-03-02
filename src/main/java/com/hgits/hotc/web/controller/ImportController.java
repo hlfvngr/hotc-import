@@ -65,12 +65,13 @@ public class ImportController {
 
     @PostMapping("/persist")
     public ApiResult importFlowAboutNaturalSum(@RequestParam("file") MultipartFile file) throws IOException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        //1. 读取文件名，然后进行文件名校验及MD5码校验
-        //2. 读取压缩包中文件的内容，将每种类型的文件进行插库   完成
-        //3. 在插库操作中，保证事务性，若中间有插入失败，则回滚，返回插入失败 完成
+        //一. 读取文件名，然后进行文件名校验及MD5码校验
+        //二. 读取压缩包中文件的内容，将每种类型的文件进行插库   完成
+        //三. 在插库操作中，保证事务性，若中间有插入失败，则回滚，返回插入失败 完成
         String originalFilename = file.getOriginalFilename();
         String fileNameNoEx = FileUtils.getFileNameNoEx(originalFilename);
 
+        //1. 校验文件的MD5码
         Log aLog = getLog(originalFilename);
 
         InputStream inputStream = file.getInputStream();
@@ -78,13 +79,13 @@ public class ImportController {
         String tmpDir = hotcProperties.getTmpDir();
         String parent = tmpDir + File.separator + fileNameNoEx;
 
-        //1. 将压缩文件解压到指定目录
+        //2. 将压缩文件解压到指定目录
         ZipUtils.unzip(parent, inputStream);
 
-        //2. 从指定目录提取文件
+        //3. 从指定目录提取文件
         List<File> files = FileUtils.getFilesFrom(parent);
 
-        //3. 将文件转化成相应的实体类
+        //4. 将文件转化成相应的实体类
         if(files == null)
             return ApiResult.builder().code(0).msg("插入成功").build();
 
@@ -96,7 +97,7 @@ public class ImportController {
             entityListMap.put(aClass, objects);
         }
 
-        //4. 尝试将解压缩的文件进行入库
+        //5. 尝试将解压缩的文件进行入库
         try {
             importService.saveData(entityListMap);
         } catch (Exception e) {
@@ -105,7 +106,11 @@ public class ImportController {
             aLog.setResult(ImportResult.FAIL.getCode());
             return ApiResult.builder().code(1).msg("插入失败").build();
         } finally {
+        //6. 插入日志
             logService.insert(aLog);
+
+        //7. 删除解析文件
+            FileUtils.deleteDirectory(new File(parent));
         }
 
         return ApiResult.builder().code(0).msg("插入成功").build();
